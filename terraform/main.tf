@@ -95,26 +95,28 @@ resource "aws_lambda_function" "inventory_api" {
     depends_on = [data.archive_file.lambda_zip]
 }
 
-# 7. Das HTTP API Gateway erstellen
+# 7. Das HTTP API Gateway erstellen (CORS um OPTIONS erweitert)
 resource "aws_apigatewayv2_api" "http_api" {
     name          = "inventory-http-api"
     protocol_type = "HTTP"
   
     cors_configuration {
         allow_origins = ["*"] 
-        allow_methods = ["GET", "POST", "DELETE", "OPTIONS"]
+        allow_methods = ["GET", "POST", "DELETE", "OPTIONS"] # 🚀 OPTIONS explizit erlaubt
         allow_headers = ["content-type"]
     }
 }
 
-# 8. Die Verbindung (Integration) zwischen API Gateway und Lambda
+# 8. Die Verbindung (Integration) zwischen API Gateway und Lambda (Format auf 2.0 gesetzt)
 resource "aws_apigatewayv2_integration" "lambda_integration" {
     api_id           = aws_apigatewayv2_api.http_api.id
     integration_type = "AWS_PROXY"
     integration_uri  = aws_lambda_function.inventory_api.arn
+    
+    payload_format_version = "2.0" # 🚀 KRITISCH: Zwingt AWS auf das moderne Event-Format v2
 }
 
-# 9. Routen definieren (Wohin gehen GET, POST, DELETE?)
+# 9. Routen definieren
 resource "aws_apigatewayv2_route" "get_items" {
     api_id    = aws_apigatewayv2_api.http_api.id
     route_key = "GET /items"
@@ -124,6 +126,13 @@ resource "aws_apigatewayv2_route" "get_items" {
 resource "aws_apigatewayv2_route" "post_items" {
     api_id    = aws_apigatewayv2_api.http_api.id
     route_key = "POST /items"
+    target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+# 🚀 NEU: Fängt CORS-Preflight-Anfragen direkt am Gateway ab
+resource "aws_apigatewayv2_route" "options_items" {
+    api_id    = aws_apigatewayv2_api.http_api.id
+    route_key = "OPTIONS /items"
     target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 

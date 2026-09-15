@@ -1,184 +1,248 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* ==============================================================================
+   1. RESETS & MODERN REUSABLE VARIABLES
+   ============================================================================== */
+:root {
+  --bg-main: #0B0F19;         /* Tiefer Weltraum-Hintergrund (SaaS Dark Mode) */
+  --bg-card: #151D30;         /* Hellere Karten / Boxen */
+  --bg-input: #1F2A45;        /* Eingabefelder */
+  --text-main: #F3F4F6;       /* Reines Weiß-Grau für Fließtext */
+  --text-muted: #9CA3AF;      /* Abgedunkeltes Grau für Untertitel */
+  --primary: #3B82F6;         /* AWS-ähnliches, strahlendes Blau */
+  --primary-hover: #2563EB;   /* Dunkleres Blau bei Hover */
+  --accent-green: #10B981;    /* Aktiv-Status oder Bestandszahlen */
+  --accent-danger: #EF4444;   /* Löschen-Buttons */
+  --accent-danger-hover: #DC2626;
+  --border-color: #2D3A5D;    /* Subtile Rahmen für saubere Abgrenzung */
+  --radius: 8px;              /* Einheitliche, moderne Abrundung */
+  --transition: all 0.25s ease;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
-
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
+* {
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 40px 20px;
+}
+
+/* Base-Layout für das zentrierte Dashboard */
+.inventory-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==============================================================================
+   2. HEADER & CONTROL SESSIONS
+   ============================================================================== */
+header {
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 24px;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+header .subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* ==============================================================================
+   3. SECTIONS & LAYOUT BLOCKS (GRID)
+   ============================================================================== */
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+/* Auf größeren Bildschirmen Formular und Liste nebeneinander anzeigen */
+@media (min-width: 900px) {
+  main {
+    grid-template-columns: 350px 1fr;
+  }
+  .search-section {
+    grid-column: 1 / -1; /* Die Suche zieht sich oben über die volle Breite */
+  }
+}
+
+section {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-main);
+  border-left: 4px solid var(--primary);
+  padding-left: 10px;
+}
+
+/* ==============================================================================
+   4. FORMS & INPUTS (SEARCH / CREATE)
+   ============================================================================== */
+.search-form, .inventory-form {
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+  gap: 12px;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.inventory-form {
+  flex-direction: column;
 }
 
-.ticks {
-  position: relative;
+input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  outline: none;
+  transition: var(--transition);
   width: 100%;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+input::placeholder {
+  color: #6B7280;
+}
+
+/* ==============================================================================
+   5. BUTTONS
+   ============================================================================== */
+button {
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+/* Primärer Action-Button (Add/Search) */
+button[type="submit"], .search-form button {
+  background-color: var(--primary);
+  color: #FFFFFF;
+}
+
+button[type="submit"]:hover, .search-form button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Reset Button */
+button[type="button"] {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+button[type="button"]:hover {
+  color: var(--text-main);
+  background-color: var(--bg-input);
+}
+
+/* Delete Button */
+.btn-delete {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--accent-danger);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.btn-delete:hover {
+  background-color: var(--accent-danger);
+  color: #FFFFFF;
+}
+
+/* ==============================================================================
+   6. TABLE & DATA PRESENTATION
+   ============================================================================== */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto; /* Verhindert Layout-Bruch auf Smartphones */
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.inventory-table th {
+  background-color: var(--bg-input);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.inventory-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: #D1D5DB;
+}
+
+.inventory-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02); /* Subtiles Zeilen-Highlight */
+}
+
+/* Dekorative Elemente innerhalb der Tabelle */
+code {
+  background-color: var(--bg-input);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #F43F5E;
+  font-size: 0.85rem;
+}
+
+.badge-category {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60A5FA;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Fallback-Nachrichten */
+.no-data {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px 0;
+  font-style: italic;
+}
+
+.error-message {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--accent-danger);
+  color: #FCA5A5;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  grid-column: 1 / -1;
 }
