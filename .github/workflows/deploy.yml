@@ -1,0 +1,62 @@
+name: AWS Serverless Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Code aus dem GitHub-Repository auschecken
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Node.js installieren und React-Frontend bauen
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm' # Beschleunigt zukünftige Pipeline-Runs
+
+      - name: Install Frontend Dependencies & Build
+        run: |
+          npm ci
+          npm run build
+        # Falls dein React-Code in einem Unterordner liegt, passe die Zeile darunter an (z.B. ./frontend)
+        working-directory: .
+
+      # 3. Bei AWS einloggen (Nutzt deine GitHub Secrets)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      # 4. Terraform auf dem GitHub-Server installieren
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # 5. Terraform initialisieren
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+        
+      # 6. Infrastruktur und Lambda ausrollen
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
+        
+      # 7. Kompletten Build-Ordner sauber in S3 synchronisieren
+      - name: Deploy Frontend to S3
+        run: |
+          BUCKET_NAME=$(terraform output -raw frontend_bucket_name)
+          # Synchronisiert den Build-Ordner (Vite nutzt standardmäßig 'dist')
+          aws s3 sync ../dist/ s3://$BUCKET_NAME/ --delete
+        working-directory: ./terraform
