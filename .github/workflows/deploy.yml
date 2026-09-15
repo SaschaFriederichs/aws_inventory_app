@@ -27,6 +27,7 @@ jobs:
       - name: Install Frontend Dependencies & Build
         run: |
           npm ci
+          cp .env .env.production 
           npm run build
         # Falls dein React-Code in einem Unterordner liegt, passe die Zeile darunter an (z.B. ./frontend)
         working-directory: .
