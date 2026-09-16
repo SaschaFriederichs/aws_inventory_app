@@ -2,173 +2,188 @@
    1. RESETS & MODERN REUSABLE VARIABLES
    ============================================================================== */
 :root {
-  --bg-main: #0B0F19;         /* Tiefer Weltraum-Hintergrund (SaaS Dark Mode) */
-  --bg-card: #151D30;         /* Hellere Karten / Boxen */
-  --bg-input: #1F2A45;        /* Eingabefelder */
-  --text-main: #F3F4F6;       /* Reines Weiß-Grau für Fließtext */
-  --text-muted: #9CA3AF;      /* Abgedunkeltes Grau für Untertitel */
-  --primary: #3B82F6;         /* AWS-ähnliches, strahlendes Blau */
-  --primary-hover: #2563EB;   /* Dunkleres Blau bei Hover */
-  --accent-green: #10B981;    /* Aktiv-Status oder Bestandszahlen */
-  --accent-danger: #EF4444;   /* Löschen-Buttons */
-  --accent-danger-hover: #DC2626;
-  --border-color: #2D3A5D;    /* Subtile Rahmen für saubere Abgrenzung */
-  --radius: 8px;              /* Einheitliche, moderne Abrundung */
-  --transition: all 0.25s ease;
+    --bg-main: #0B0F19;         /* Dark background (SaaS Dark Mode) */
+    --bg-card: #151D30;         /* Brigther cards / boxes */
+    --bg-input: #1F2A45;        /* Input fields */
+    --text-main: #F3F4F6;       /* Clear white for flow text */
+    --text-muted: #9CA3AF;      /* Grey for sub-titles */
+    --primary: #3B82F6;         /* AWS similar brigth blue */
+    --primary-hover: #2563EB;   /* Dark blue on hover */
+    --accent-green: #10B981;    /* Aktive status or item counter */
+    --accent-danger: #EF4444;   /* Delete buttons */
+    --accent-danger-hover: #DC2626;
+    --border-color: #2D3A5D;    /* Subtile frame for clean separation */
+    --radius: 8px;              /* Modern rounded edges */
+    --transition: all 0.25s ease;
 }
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding: 40px 20px;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 24px 12px; /* Reduced side padding on mobile */
+}
+
+/* Increase layout padding back to normal on tablet screens and above */
+@media (min-width: 600px) {
+    body {
+        padding: 40px 20px;
+    }
 }
 
 /* Base-Layout für das zentrierte Dashboard */
 .inventory-container {
-  max-width: 1200px;
-  margin: 0 auto;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* ==============================================================================
    2. HEADER & CONTROL SESSIONS
    ============================================================================== */
 header {
-  margin-bottom: 32px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 24px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 24px;
 }
 
 header h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 6px;
+    color: var(--text-main);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
 }
 
 header .subtitle {
-  color: var(--text-muted);
-  font-size: 1rem;
+    color: var(--text-muted);
+    font-size: 1rem;
 }
 
 /* ==============================================================================
    3. SECTIONS & LAYOUT BLOCKS (GRID)
    ============================================================================== */
 main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
 }
 
 /* Auf größeren Bildschirmen Formular und Liste nebeneinander anzeigen */
 @media (min-width: 900px) {
-  main {
-    grid-template-columns: 350px 1fr;
-  }
-  .search-section {
-    grid-column: 1 / -1; /* Die Suche zieht sich oben über die volle Breite */
-  }
+    main {
+        grid-template-columns: 350px 1fr;
+    }
+    .search-section {
+        grid-column: 1 / -1; /* Die Suche zieht sich oben über die volle Breite */
+    }
 }
 
 section {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
 section h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: var(--text-main);
-  border-left: 4px solid var(--primary);
-  padding-left: 10px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-main);
+    border-left: 4px solid var(--primary);
+    padding-left: 10px;
 }
 
 /* ==============================================================================
    4. FORMS & INPUTS (SEARCH / CREATE)
    ============================================================================== */
 .search-form, .inventory-form {
-  display: flex;
-  gap: 12px;
+    display: flex;
+    gap: 12px;
+}
+
+/* Stack search elements vertically on small viewports */
+@media (max-width: 480px) {
+    .search-form {
+        flex-direction: column;
+    }
 }
 
 .inventory-form {
-  flex-direction: column;
+    flex-direction: column;
 }
 
 input {
-  background-color: var(--bg-input);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  color: var(--text-main);
-  font-size: 0.95rem;
-  padding: 12px 16px;
-  outline: none;
-  transition: var(--transition);
-  width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    outline: none;
+    transition: var(--transition);
+    width: 100%;
 }
 
 input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 input::placeholder {
-  color: #6B7280;
+    color: #6B7280;
 }
 
 /* ==============================================================================
    5. BUTTONS
    ============================================================================== */
 button {
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding: 12px 20px;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: var(--transition);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
 }
 
 /* Primärer Action-Button (Add/Search) */
 button[type="submit"], .search-form button {
-  background-color: var(--primary);
-  color: #FFFFFF;
+    background-color: var(--primary);
+    color: #FFFFFF;
 }
 
 button[type="submit"]:hover, .search-form button:hover {
-  background-color: var(--primary-hover);
+    background-color: var(--primary-hover);
 }
 
 /* Reset Button */
 button[type="button"] {
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
 }
 
 button[type="button"]:hover {
-  color: var(--text-main);
-  background-color: var(--bg-input);
+    color: var(--text-main);
+    background-color: var(--bg-input);
 }
 
 /* Delete Button */
 .btn-delete {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--accent-danger);
-  padding: 6px 12px;
-  font-size: 0.85rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--accent-danger);
+    padding: 6px 12px;
+    font-size: 0.85rem;
 }
 
 .btn-delete:hover {
@@ -180,69 +195,77 @@ button[type="button"]:hover {
    6. TABLE & DATA PRESENTATION
    ============================================================================== */
 .table-responsive {
-  width: 100%;
-  overflow-x: auto; /* Verhindert Layout-Bruch auf Smartphones */
+    width: 100%;
+    overflow-x: auto; /* Verhindert Layout-Bruch auf Smartphones */
 }
 
 .inventory-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 0.95rem;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
 }
 
 .inventory-table th {
-  background-color: var(--bg-input);
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-input);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .inventory-table td {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-  color: #D1D5DB;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: #D1D5DB;
+  
+    /* Forces long words/IDs to break onto the next line instead of breaking layout */
+    word-break: break-word; 
+    overflow-wrap: break-word; 
 }
 
 .inventory-table tr:hover td {
-  background-color: rgba(255, 255, 255, 0.02); /* Subtiles Zeilen-Highlight */
+    background-color: rgba(255, 255, 255, 0.02); /* Subtiles Zeilen-Highlight */
 }
 
 /* Dekorative Elemente innerhalb der Tabelle */
 code {
-  background-color: var(--bg-input);
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: #F43F5E;
-  font-size: 0.85rem;
+    background-color: var(--bg-input);
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #F43F5E;
+    font-size: 0.85rem;
 }
 
 .badge-category {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #60A5FA;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 /* Fallback-Nachrichten */
 .no-data {
-  color: var(--text-muted);
-  text-align: center;
-  padding: 40px 0;
-  font-style: italic;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 40px 0;
+    font-style: italic;
 }
 
 .error-message {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid var(--accent-danger);
-  color: #FCA5A5;
-  padding: 12px 16px;
-  border-radius: var(--radius);
-  grid-column: 1 / -1;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--accent-danger);
+    color: #FCA5A5;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    grid-column: 1 / -1;
+}
+
+.inventory-app-footer {
+    padding: 16px
 }
