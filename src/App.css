@@ -2,18 +2,18 @@
    1. RESETS & MODERN REUSABLE VARIABLES
    ============================================================================== */
 :root {
-    --bg-main: #0B0F19;         /* Dark background (SaaS Dark Mode) */
-    --bg-card: #151D30;         /* Brigther cards / boxes */
+    --bg-main: #0B0F19;         /* Deep space background (SaaS Dark Mode) */
+    --bg-card: #151D30;         /* Lighter cards / boxes */
     --bg-input: #1F2A45;        /* Input fields */
-    --text-main: #F3F4F6;       /* Clear white for flow text */
-    --text-muted: #9CA3AF;      /* Grey for sub-titles */
-    --primary: #3B82F6;         /* AWS similar brigth blue */
-    --primary-hover: #2563EB;   /* Dark blue on hover */
-    --accent-green: #10B981;    /* Aktive status or item counter */
+    --text-main: #F3F4F6;       /* Clean white-grey for body text */
+    --text-muted: #9CA3AF;      /* Muted grey for subtitles */
+    --primary: #3B82F6;         /* AWS-like vibrant blue */
+    --primary-hover: #2563EB;   /* Darker blue on hover */
+    --accent-green: #10B981;    /* Active status or stock numbers */
     --accent-danger: #EF4444;   /* Delete buttons */
     --accent-danger-hover: #DC2626;
-    --border-color: #2D3A5D;    /* Subtile frame for clean separation */
-    --radius: 8px;              /* Modern rounded edges */
+    --border-color: #2D3A5D;    /* Subtle borders for clean separation */
+    --radius: 8px;              /* Uniform, modern border radius */
     --transition: all 0.25s ease;
 }
 
@@ -29,20 +29,27 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    padding: 24px 12px; /* Reduced side padding on mobile */
+    padding: 24px 0;            /* Vertical padding only, sides handled by container */
 }
 
-/* Increase layout padding back to normal on tablet screens and above */
 @media (min-width: 600px) {
     body {
-        padding: 40px 20px;
+        padding: 40px 0;
     }
 }
 
-/* Base-Layout für das zentrierte Dashboard */
+/* Base layout wrapper for the centered dashboard */
 .inventory-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 16px;            /* CRITICAL: Protects side spacing on mobile viewports */
+}
+
+@media (min-width: 900px) {
+    .inventory-container {
+        padding: 0 24px;        /* Slightly larger side gutters on desktop layout */
+    }
 }
 
 /* ==============================================================================
@@ -55,9 +62,9 @@ header {
 }
 
 header h1 {
-    /* Fluid typography: minimum 1.6rem, scales with 4vw, maximum 2.2rem */
+    /* Responsive fluid typography to prevent line-breaks on small mobile viewports */
     color: var(--text-main);
-    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
     font-weight: 700;
     letter-spacing: -0.5px;
     margin-bottom: 6px;
@@ -68,22 +75,6 @@ header .subtitle {
     font-size: 1rem;
 }
 
-section h2 {
-    font-size: 1.15rem; /* Slightly smaller base size for mobile */
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--text-main);
-    border-left: 4px solid var(--primary);
-    padding-left: 10px;
-}
-
-/* Upscale h2 back to desktop size on larger screens */
-@media (min-width: 600px) {
-    section h2 {
-        font-size: 1.25rem;
-    }
-}
-
 /* ==============================================================================
    3. SECTIONS & LAYOUT BLOCKS (GRID)
    ============================================================================== */
@@ -91,15 +82,16 @@ main {
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
+    width: 100%;
 }
 
-/* Auf größeren Bildschirmen Formular und Liste nebeneinander anzeigen */
+/* Side-by-side grid layout on larger viewports */
 @media (min-width: 900px) {
     main {
         grid-template-columns: 350px 1fr;
     }
     .search-section {
-        grid-column: 1 / -1; /* Die Suche zieht sich oben über die volle Breite */
+        grid-column: 1 / -1; /* Search section stretches across full grid width */
     }
 }
 
@@ -107,17 +99,30 @@ section {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
-    padding: 24px;
+    padding: 20px;              /* Slightly reduced padding for mobile comfort */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    min-width: 0;               /* CRITICAL: Allows grid items to shrink below text size */
+}
+
+@media (min-width: 600px) {
+    section {
+        padding: 24px;          /* Full padding on larger viewports */
+    }
 }
 
 section h2 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;         /* Optimized header size for mobile screens */
     font-weight: 600;
     margin-bottom: 20px;
     color: var(--text-main);
     border-left: 4px solid var(--primary);
     padding-left: 10px;
+}
+
+@media (min-width: 600px) {
+    section h2 {
+        font-size: 1.25rem;     /* Standard size on desktop */
+    }
 }
 
 /* ==============================================================================
@@ -128,11 +133,9 @@ section h2 {
     gap: 12px;
 }
 
-/* Stack search fields vertically on mobile to prevent squishing */
-@media (max-width: 480px) {
-    .search-form {
-        flex-direction: column;
-    }
+.search-form {
+    align-items: center;
+    width: 100%;
 }
 
 .inventory-form {
@@ -171,6 +174,7 @@ button {
     border-radius: var(--radius);
     cursor: pointer;
     transition: var(--transition);
+    white-space: nowrap;
 }
 
 /* Primary Action Button (Add/Search) */
@@ -208,16 +212,17 @@ button[type="button"]:hover {
     color: #FFFFFF;
 }
 
-/* Stretch buttons to full width on small mobile viewports */
-@media (max-width: 480px) {
-    button {
-        width: 100%;
-        text-align: center;
+/* Responsive layout overrides for mobile screens */
+@media (max-width: 768px) {
+    .search-form {
+        flex-direction: column;
+        align-items: stretch; /* Forces all child elements to stretch to full width */
+        gap: 12px;
     }
-    
-    /* Adds spacing if two buttons stack underneath each other */
-    button + button {
-        margin-top: 8px;
+
+    .search-form button,
+    .search-form input {
+        width: 100%;         /* Ensures inputs and buttons take 100% of the container width */
     }
 }
 
@@ -226,7 +231,8 @@ button[type="button"]:hover {
    ============================================================================== */
 .table-responsive {
     width: 100%;
-    overflow-x: auto; /* Verhindert Layout-Bruch auf Smartphones */
+    overflow-x: auto;           /* Prevents viewport break by keeping scrolling local */
+    -webkit-overflow-scrolling: touch;
 }
 
 .inventory-table {
@@ -251,23 +257,24 @@ button[type="button"]:hover {
     padding: 16px;
     border-bottom: 1px solid var(--border-color);
     color: #D1D5DB;
-  
-    /* Forces long words/IDs to break onto the next line instead of breaking layout */
-    word-break: break-word; 
-    overflow-wrap: break-word; 
+    
+    /* CRITICAL MOBILE FIX: Breaks raw codes, long text strings or product names inside cells */
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .inventory-table tr:hover td {
-    background-color: rgba(255, 255, 255, 0.02); /* Subtiles Zeilen-Highlight */
+    background-color: rgba(255, 255, 255, 0.02); /* Subtle row highlight */
 }
 
-/* Dekorative Elemente innerhalb der Tabelle */
+/* Decorative elements inside table */
 code {
     background-color: var(--bg-input);
     padding: 4px 8px;
     border-radius: 4px;
     color: #F43F5E;
     font-size: 0.85rem;
+    word-break: break-all;      /* Stronger breaking rule specifically for raw code blocks */
 }
 
 .badge-category {
@@ -277,9 +284,10 @@ code {
     border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 600;
+    display: inline-block;      /* Prevents badge text background from weird splitting */
 }
 
-/* Fallback-Nachrichten */
+/* Fallback messages */
 .no-data {
     color: var(--text-muted);
     text-align: center;
@@ -296,7 +304,29 @@ code {
     grid-column: 1 / -1;
 }
 
+/* ==============================================================================
+   7. FOOTER
+   ============================================================================== */
 .inventory-app-footer {
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 24px;
     text-align: center;
-    padding: 16px
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.footer-legal-links {
+    margin-top: 8px;
+}
+
+.footer-legal-links a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-legal-links a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
 }
