@@ -15,17 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Check out the application source code
+      # 1. Check out the application source code (Upgraded to v5)
       - name: Checkout Source Code
-        uses: actions/checkout@v4.2.2 # Updated version natively supporting Node 24
+        uses: actions/checkout@v5
 
-      # 2. Set up Node.js environment for building the frontend components
+      # 2. Set up Node.js environment (Upgraded to v5)
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v4.2.0 # Updated version natively supporting Node 24
+        uses: actions/setup-node@v5
         with:
-          node-version: '22' # Utilizing Node 22 (LTS) or higher for modern compilation
+          node-version: '22'
           cache: 'npm'
-          cache-dependency-path: './frontend/package-lock.json' # Adjust path structure if needed
+          cache-dependency-path: './frontend/package-lock.json'
 
       # 3. Securely authenticate with Amazon Web Services
       - name: Configure AWS Credentials
