@@ -12,25 +12,25 @@ const dynamo = DynamoDBDocumentClient.from(client);
 const tableName = process.env.TABLE_NAME;
 
 exports.handler = async (event) => {
-    // Protokolliert das exakte Event im CloudWatch-Log zur Fehlerdiagnose
+    // Logs the exact event to CloudWatch Logs for debugging and troubleshooting
     console.log("Received event:", JSON.stringify(event, null, 2));
     
     let body;
     let statusCode = 200;
     const headers = {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*", // Verhindert CORS-Blockaden im Browser
+        "Access-Control-Allow-Origin": "*", // Prevents CORS blockages in the browser
         "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type"
     };
 
-    // 1. Sofortige Antwort für CORS-Preflight-Anfragen (OPTIONS)
+    // 1. Immediate response for CORS preflight requests (OPTIONS)
     if (event.requestContext && event.requestContext.http && event.requestContext.http.method === "OPTIONS") {
         return { statusCode: 204, headers, body: "" };
     }
 
     try {
-        // Sicheres Auslesen des Routenschlüssels
+        // Safe extraction of the route key
         let routeKey = event.routeKey;
         if (!routeKey && event.requestContext && event.requestContext.http) {
             routeKey = `${event.requestContext.http.method} ${event.requestContext.http.path}`;
@@ -41,11 +41,11 @@ exports.handler = async (event) => {
             throw new Error("Could not determine routeKey from API Gateway event.");
         }
 
-        // Sicherstellen, dass queryStringParameters niemals null ist
+        // Ensure queryStringParameters is never null
         const queryParams = event.queryStringParameters || {};
 
         switch (routeKey) {
-            // ANFORDERUNG: "The inventory app shall allow to remove items."
+            // REQUIREMENT: "The inventory app shall allow to remove items."
             case "DELETE /items":
                 if (!queryParams.id) {
                     statusCode = 400;
@@ -58,12 +58,12 @@ exports.handler = async (event) => {
                 body = { message: `Item ${queryParams.id} deleted successfully` };
                 break;
 
-            // ANFORDERUNG: "The inventory app shall allow to list all items." AND "to search for items."
+            // REQUIREMENT: "The inventory app shall allow to list all items." AND "to search for items."
             case "GET /items":
                 const searchParam = queryParams.search;
                 
                 if (searchParam && searchParam.trim() !== "") {
-                    // Hocheffiziente Suche über den in dynamodb.tf definierten NameIndex
+                    // Highly efficient lookup via the NameIndex defined in dynamodb.tf
                     const queryResult = await dynamo.send(new QueryCommand({
                         TableName: tableName,
                         IndexName: "NameIndex",
@@ -73,13 +73,13 @@ exports.handler = async (event) => {
                     }));
                     body = queryResult.Items || [];
                 } else {
-                    // Standard-Fallback: Liste alle Gegenstände auf
+                    // Default fallback: List all items
                     const scanResult = await dynamo.send(new ScanCommand({ TableName: tableName }));
                     body = scanResult.Items || [];
                 }
                 break;
 
-            // ANFORDERUNG: "The inventory app shall allow to add new items."
+            // REQUIREMENT: "The inventory app shall allow to add new items."
             case "POST /items":
                 if (!event.body) {
                     statusCode = 400;
@@ -120,7 +120,7 @@ exports.handler = async (event) => {
         }
     } catch (err) {
         console.error("Caught Lambda Execution Error:", err);
-        // Behalte den spezifischen Validierungs-Statuscode bei, ansonsten setze 500
+        // Keep the specific validation status code if already set, otherwise default to 500
         statusCode = statusCode === 200 ? 500 : statusCode;
         body = { error: err.message };
     }
