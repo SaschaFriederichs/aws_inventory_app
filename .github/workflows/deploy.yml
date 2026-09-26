@@ -50,17 +50,19 @@ jobs:
           terraform apply --auto-approve
 
       # 6. Install dependencies and compile frontend production bundle
+      # FIX: Removed "cd frontend" because your frontend is located directly in the root directory
       - name: Build Frontend Application
         run: |
-          cd frontend
           npm ci
           npm run build
 
       # 7. Synchronize static frontend distribution assets to the Amazon S3 Bucket
+      # FIX: Adjusted path from "./frontend/dist" to "./dist" because the build folder is generated in the root directory
       - name: Sync Frontend Assets to Amazon S3
         run: |
           # Fetch the dynamic S3 bucket name directly from the output of the applied Terraform state
           BUCKET_NAME=$(cd terraform && terraform output -raw frontend_bucket_name)
           
           # Synchronize build assets with the destination bucket while purging deprecated files
-          aws s3 sync ./frontend/dist s3://$BUCKET_NAME --delete
+          aws s3 sync ./dist s3://$BUCKET_NAME --delete
+
