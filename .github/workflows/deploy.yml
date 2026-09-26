@@ -1,62 +1,66 @@
-name: AWS Serverless Deployment
+name: AWS Inventory App Deployment
 
 on:
   push:
     branches:
-      - main
+      - main # Triggers the pipeline on every push event to the main branch
 
 permissions:
-  id-token: write
-  contents: read
+  id-token: write   # Required for secure AWS OIDC authentication configurations
+  contents: read    # Required to check out the repository source code
 
 jobs:
   deploy:
+    name: Build, Provision & Deploy
     runs-on: ubuntu-latest
+
     steps:
-      # 1. Code aus dem GitHub-Repository auschecken
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      # 1. Check out the application source code
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.2.2 # Updated version natively supporting Node 24
 
-      # 2. Node.js installieren und React-Frontend bauen
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # 2. Set up Node.js environment for building the frontend components
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4.2.0 # Updated version natively supporting Node 24
         with:
-          node-version: 22
-          cache: 'npm' # Beschleunigt zukünftige Pipeline-Runs
+          node-version: '22' # Utilizing Node 22 (LTS) or higher for modern compilation
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json' # Adjust path structure if needed
 
-      - name: Install Frontend Dependencies & Build
-        run: |
-          npm ci
-          npm run build
-        # Falls dein React-Code in einem Unterordner liegt, passe die Zeile darunter an (z.B. ./frontend)
-        working-directory: .
-
-      # 3. Bei AWS einloggen (Nutzt deine GitHub Secrets)
+      # 3. Securely authenticate with Amazon Web Services
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4.1.0 # Updated version natively supporting Node 24
         with:
+          aws-region: eu-central-1
+          # Recommended Best Practice: Transition to IAM Role OIDC instead of long-lived Secrets
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
 
-      # 4. Terraform auf dem GitHub-Server installieren
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      # 4. Initialize and install the Terraform CLI on the runner
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3.1.2 # Updated version natively supporting Node 24
+        with:
+          terraform_version: "1.5.7" # Specifies your designated Terraform execution version
 
-      # 5. Terraform initialisieren
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./terraform
-        
-      # 6. Infrastruktur und Lambda ausrollen
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./terraform
-        
-      # 7. Kompletten Build-Ordner sauber in S3 synchronisieren
-      - name: Deploy Frontend to S3
+      # 5. Provision Infrastructure as Code (IaC)
+      - name: Terraform Initialize and Apply
         run: |
-          BUCKET_NAME=$(terraform output -raw frontend_bucket_name)
-          # Synchronisiert den Build-Ordner (Vite nutzt standardmäßig 'dist')
-          aws s3 sync ../dist/ s3://$BUCKET_NAME/ --delete
-        working-directory: ./terraform
+          cd terraform
+          terraform init
+          terraform apply --auto-approve
+
+      # 6. Install dependencies and compile frontend production bundle
+      - name: Build Frontend Application
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      # 7. Synchronize static frontend distribution assets to the Amazon S3 Bucket
+      - name: Sync Frontend Assets to Amazon S3
+        run: |
+          # Fetch the dynamic S3 bucket name directly from the output of the applied Terraform state
+          BUCKET_NAME=$(cd terraform && terraform output -raw frontend_bucket_name)
+          
+          # Synchronize build assets with the destination bucket while purging deprecated files
+          aws s3 sync ./frontend/dist s3://$BUCKET_NAME --delete
